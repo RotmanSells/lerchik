@@ -1,0 +1,22 @@
+# Backup files
+*.bak
+*.tmp
+*.old
+*.backup
+
+# Local config files
+config.local.*
+.env
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# PHP backup script
+scripts/backup.php

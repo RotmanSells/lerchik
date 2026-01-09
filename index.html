@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0F0F0F">
+    <meta name="description" content="Онлайн-запись на процедуры Массаж и Лазер">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230F0F0F' width='100' height='100' rx='20'/><text x='50' y='68' text-anchor='middle' font-size='50' font-family='sans-serif' fill='%23A78BFA'>Т</text></svg>">
+    
+    <title>ИДЕАЛЬНОЕ ТЕЛО | Запись</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(registration => console.log('SW registered'))
+            .catch(err => console.log('SW registration failed: ', err));
+        });
+      }
+    </script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="logo">
+                <span class="logo-text">Идеальное <span class="logo-accent">ТЕЛО</span></span>
+                <div id="current-date" class="date-display"></div>
+            </div>
+            <div class="header-controls">
+                <button id="btn-calendar" class="icon-btn" aria-label="Открыть календарь">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </button>
+                <button id="btn-admin" class="icon-btn" aria-label="Настройки">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="filter-bar">
+            <div class="segment-control" id="filter-procedure" data-mode="mint">
+                <div class="segment-bg"></div>
+                <button class="segment-btn active" data-value="all">Все</button>
+                <button class="segment-btn" data-value="massage">Массаж</button>
+                <button class="segment-btn" data-value="laser">Лазер</button>
+            </div>
+            
+            <div class="segment-control two-items" id="filter-master" data-mode="purple">
+                <div class="segment-bg"></div>
+                <button class="segment-btn active" data-value="ulya">Уля</button>
+                <button class="segment-btn" data-value="lerchik">Лерчик</button>
+            </div>
+        </div>
+
+        <main id="slots-container" class="slots-container">
+            <div class="loading-state" style="padding: 20px; text-align: center; color: var(--color-text-muted);">
+                Загрузка расписания...
+            </div>
+        </main>
+
+        <div id="modal-booking" class="modal-backdrop">
+            <div class="modal-sheet">
+                <div class="sheet-handle"></div>
+                <h2 class="modal-title">Новая запись</h2>
+                <div id="booking-summary" style="margin-bottom: 20px; text-align: center;"></div>
+                
+                <form id="booking-form">
+                    <div class="form-group">
+                        <label class="form-label">Процедура</label>
+                        <div class="choice-buttons" id="choice-procedure">
+                            <button type="button" class="choice-btn" data-value="massage">Массаж</button>
+                            <button type="button" class="choice-btn" data-value="laser">Лазер</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Мастер</label>
+                        <div class="choice-buttons" id="choice-master">
+                            <button type="button" class="choice-btn" data-value="ulya">Уля</button>
+                            <button type="button" class="choice-btn" data-value="lerchik">Лерчик</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Телефон (последние 4 цифры)</label>
+                        <input type="text" id="phone-display" class="input-numpad-display" readonly placeholder="••••" maxlength="4">
+                        <div class="numpad-grid">
+                            <button type="button" class="numpad-btn" data-key="1">1</button>
+                            <button type="button" class="numpad-btn" data-key="2">2</button>
+                            <button type="button" class="numpad-btn" data-key="3">3</button>
+                            <button type="button" class="numpad-btn" data-key="4">4</button>
+                            <button type="button" class="numpad-btn" data-key="5">5</button>
+                            <button type="button" class="numpad-btn" data-key="6">6</button>
+                            <button type="button" class="numpad-btn" data-key="7">7</button>
+                            <button type="button" class="numpad-btn" data-key="8">8</button>
+                            <button type="button" class="numpad-btn" data-key="9">9</button>
+                            <button type="button" class="numpad-btn" data-key="back">⌫</button>
+                            <button type="button" class="numpad-btn" data-key="0">0</button>
+                            <button type="button" class="numpad-btn" data-key="clear">C</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Комментарий (опционально)</label>
+                        <input type="text" id="booking-comment" class="form-input" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #222; color: white;" placeholder="Ваше имя или примечание">
+                    </div>
+
+                    <button type="submit" class="btn-primary">Записаться</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="modal-details" class="modal-backdrop">
+            <div class="modal-sheet">
+                <div class="sheet-handle"></div>
+                <h2 class="modal-title">Детали записи</h2>
+                <div id="details-content" style="text-align: center; margin-bottom: 24px;"></div>
+                <div class="actions-stack">
+                    <button id="btn-details-edit" class="btn-primary" style="margin-bottom: 12px; background: var(--color-mint); color: black;">Редактировать</button>
+                    <button id="btn-details-call" class="btn-primary" style="margin-bottom: 12px; background: #333; color: white;">Позвонить клиенту</button>
+                    <button id="btn-details-delete" class="btn-primary btn-danger">Отменить запись</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-edit" class="modal-backdrop">
+            <div class="modal-sheet">
+                <div class="sheet-handle"></div>
+                <h2 class="modal-title">Редактировать запись</h2>
+                <div id="edit-summary" style="margin-bottom: 20px; text-align: center;"></div>
+                
+                <form id="edit-form">
+                    <div class="form-group">
+                        <label class="form-label">Процедура</label>
+                        <div class="choice-buttons" id="edit-choice-procedure">
+                            <button type="button" class="choice-btn" data-value="massage">Массаж</button>
+                            <button type="button" class="choice-btn" data-value="laser">Лазер</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Мастер</label>
+                        <div class="choice-buttons" id="edit-choice-master">
+                            <button type="button" class="choice-btn" data-value="ulya">Уля</button>
+                            <button type="button" class="choice-btn" data-value="lerchik">Лерчик</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Телефон (последние 4 цифры)</label>
+                        <input type="text" id="edit-phone-display" class="input-numpad-display" readonly placeholder="••••" maxlength="4">
+                        <div class="numpad-grid" id="edit-numpad">
+                            <button type="button" class="numpad-btn" data-key="1">1</button>
+                            <button type="button" class="numpad-btn" data-key="2">2</button>
+                            <button type="button" class="numpad-btn" data-key="3">3</button>
+                            <button type="button" class="numpad-btn" data-key="4">4</button>
+                            <button type="button" class="numpad-btn" data-key="5">5</button>
+                            <button type="button" class="numpad-btn" data-key="6">6</button>
+                            <button type="button" class="numpad-btn" data-key="7">7</button>
+                            <button type="button" class="numpad-btn" data-key="8">8</button>
+                            <button type="button" class="numpad-btn" data-key="9">9</button>
+                            <button type="button" class="numpad-btn" data-key="back">⌫</button>
+                            <button type="button" class="numpad-btn" data-key="0">0</button>
+                            <button type="button" class="numpad-btn" data-key="clear">C</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Сохранить изменения</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="modal-calendar" class="modal-backdrop">
+            <div class="modal-sheet modal-sheet-full">
+                <div class="sheet-handle"></div>
+                <h2 id="cal-title" class="modal-title">Расписание</h2>
+                <div class="calendar-table-wrapper">
+                    <table class="calendar-table" id="calendar-table">
+                        <thead id="calendar-thead"></thead>
+                        <tbody id="calendar-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-admin" class="modal-backdrop">
+            <div class="modal-sheet" style="height: 90vh; max-height: 800px;">
+                <div class="sheet-handle"></div>
+                <h2 class="modal-title">Настройки</h2>
+                
+                <div class="filter-bar" style="position: static; margin-bottom: 20px;">
+                    <div class="segment-control two-items" id="admin-tabs" data-mode="mint">
+                        <div class="segment-bg"></div>
+                        <button class="segment-btn active" data-tab="stats">Статистика</button>
+                        <button class="segment-btn" data-tab="clients">Клиенты</button>
+                    </div>
+                </div>
+
+                <div id="admin-content-stats" class="admin-tab-content">
+                    <div class="stats-card">
+                        <h3>Массаж (Неделя/Месяц)</h3>
+                        <div class="stats-row">
+                            <span id="stat-massage-week" class="stat-value">0</span> / <span id="stat-massage-month" class="stat-value">0</span>
+                        </div>
+                    </div>
+                    <div class="stats-card">
+                        <h3>Лазер (Неделя/Месяц)</h3>
+                        <div class="stats-row">
+                            <span id="stat-laser-week" class="stat-value">0</span> / <span id="stat-laser-month" class="stat-value">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="admin-content-clients" class="admin-tab-content hidden">
+                    <div class="form-group">
+                        <label class="form-label">Импорт номеров (через пробел или новую строку)</label>
+                        <textarea id="clients-import-input" class="form-input" style="width: 100%; height: 100px; background: #222; border: 1px solid #333; color: white; border-radius: 12px; padding: 10px;" placeholder="+79001234567 +79007654321"></textarea>
+                        <button id="btn-import-clients" class="btn-primary" style="margin-top: 10px; padding: 10px;">Импортировать</button>
+                    </div>
+                    <div id="clients-count" class="stats-card" style="margin-top: 16px;">
+                        <h3>Всего номеров в базе</h3>
+                        <div class="stats-row"><span id="stat-clients-count" class="stat-value">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button id="btn-scroll-top" class="btn-scroll-top" style="display: none;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 15l-6-6-6 6"/>
+            </svg>
+        </button>
+
+        <div id="toast-container" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: var(--z-toast); width: 90%; max-width: 400px;"></div>
+
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
